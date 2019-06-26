@@ -32,6 +32,8 @@ if [[ "$#" -lt "1" ]]; then
     usage
 fi
 
+set -x
+
 CHROM="${1}"
 shift
 
@@ -58,5 +60,5 @@ then
 	 echo "Graph exists, not reconstructing"
 else
 	 toil clean jobstore
-	 toil-vg construct jobstore . --regions ${CHROM} --fasta sv-genotyping-paper/human/hgsvc/hg38.fa --vcf sv-genotyping-paper/human/hgsvc/HGSVC.haps.vcf.gz --pangenome --realTimeLogging --workDir . --container None
+	 toil-vg construct jobstore . --regions ${CHROM} --fasta sv-genotyping-paper/human/hgsvc/hg38.fa.gz --vcf sv-genotyping-paper/human/hgsvc/HGSVC.haps.vcf.gz --pangenome --realTimeLogging --workDir . --container None --flat_alts
 fi
