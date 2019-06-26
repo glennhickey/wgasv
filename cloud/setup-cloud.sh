@@ -14,27 +14,26 @@
 sudo apt update
 sudo apt upgrade -qyy
 sudo apt install -y make pkg-config emacs
-sudo apt install -y bcftools
 sudo apt install -y samtools
 sudo apt install -y tabix
 sudo apt install -y docker.io
 sudo usermod -aG docker $USER
 printf "\n\nNeed to log out then in for Docker to work!!\n\n"
 
-mkdir ~/ebs1
+mkdir /ebs1
 
-cd ~/ebs1
+cd /ebs1
 git clone https://github.com/vgteam/vg.git --recursive
 cd vg
 make get-deps
 make -j $(getconf _NPROCESSORS_ONLN)
 
-cd ~/ebs1
+cd /ebs1
 git clone https://github.com/vcflib/vcflib.git --recursive
 cd vcflib
 make -j $(getconf _NPROCESSORS_ONLN)
 
-cd ~/ebs1
+cd /ebs1
 git clone https://github.com/vgteam/toil-vg.git
 cd toil-vg
 virtualenv toilvenv
@@ -42,17 +41,23 @@ source toilvenv/bin/activate
 make prepare
 make develop
 
-cd ~/ebs1
+cd /ebs1
 git clone https://github.com/ekg/seqwish.git --recursive
 cd seqwish
 cmake -H. -Bbuild && cmake --build build -- -j $(getconf _NPROCESSORS_ONLN)
 
-cd ~/ebs1
+cd /ebs1
+git clone git://github.com/samtools/htslib.git
+git clone git://github.com/samtools/bcftools.git
+cd bcftools
+make
+
+cd /ebs1
 git clone https://github.com/lh3/minimap2
 cd minimap2
 make
 
-cd ~/ebs1
+cd /ebs1
 git clone https://github.com/ComparativeGenomicsToolkit/cactus.git --recursive
 cd cactus
 sudo apt install -y python-pip
@@ -64,8 +69,10 @@ pip install --upgrade .
 sudo apt-get install -y git gcc g++ build-essential python-dev zlib1g-dev libkyototycoon-dev libtokyocabinet-dev libkyotocabinet-dev wget valgrind libbz2-dev libhiredis-dev pkg-config
 make
 
-export PATH="~/ebs1/vcflib/bin:$PATH"
-export PATH="~/ebs1/seqwish/bin:$PATH"
-export PATH="~/ebs1/minimap2:$PATH"
+export PATH="/ebs1/vcflib/bin:$PATH"
+export PATH="/ebs1/seqwish/bin:$PATH"
+export PATH="/ebs1/minimap2:$PATH"
+export PATH="/ebs1/bcftools:$PATH"
+
 
 
