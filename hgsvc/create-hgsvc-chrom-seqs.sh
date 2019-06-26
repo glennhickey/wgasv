@@ -62,3 +62,16 @@ else
 	 toil clean jobstore
 	 toil-vg construct jobstore . --regions ${CHROM} --fasta sv-genotyping-paper/human/hgsvc/hg38.fa.gz --vcf sv-genotyping-paper/human/hgsvc/HGSVC.haps.vcf.gz --pangenome --realTimeLogging --workDir . --container None --flat_alts --xg_index --gbwt_index --snarls_index --out_name $NAME --gbwt_index_cores $(getconf _NPROCESSORS_ONLN)
 fi
+
+#
+# Use vg paths to extract our fasta sequences
+#
+vg paths -x ${NAME}.xg -F -Q $CHROM > hg38_${CHROM}.fa
+cat hg38_${CHROM}.fa > hgsvc_${CHROM}.fa
+for SAMPLE in HG00514 HG005733 NA19240
+do
+    vg paths -x ${NAME}.xg -g ${NAME}.gbwt -F -Q  _thread_${SAMPLE}_${CHROM}_0 | sed 's/_thread_//g'  > ${SAMPLE}_${CHROM}_0.fa
+    cat ${SAMPLE}_${CHROM}_0.fa >> hgsvc_${CHROM}.fa
+    vg paths -x ${NAME}.xg -g ${NAME}.gbwt -F -Q  _thread_${SAMPLE}_${CHROM}_1 | sed 's/_thread_//g' > ${SAMPLE}_${CHROM}_1.fa
+    cat ${SAMPLE}_${CHROM}_1.fa >> hgsvc_${CHROM}.fa
+done
