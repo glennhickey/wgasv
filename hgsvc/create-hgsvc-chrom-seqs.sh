@@ -60,5 +60,5 @@ then
 	 echo "Graph exists, not reconstructing"
 else
 	 toil clean jobstore
-	 toil-vg construct jobstore . --regions ${CHROM} --fasta sv-genotyping-paper/human/hgsvc/hg38.fa.gz --vcf sv-genotyping-paper/human/hgsvc/HGSVC.haps.vcf.gz --pangenome --realTimeLogging --workDir . --container None --flat_alts
+	 toil-vg construct jobstore . --regions ${CHROM} --fasta sv-genotyping-paper/human/hgsvc/hg38.fa.gz --vcf sv-genotyping-paper/human/hgsvc/HGSVC.haps.vcf.gz --pangenome --realTimeLogging --workDir . --container None --flat_alts --xg_index --gbwt_index --snarls_index --out_name $NAME --gbwt_index_cores $(getconf _NPROCESSORS_ONLN)
 fi
