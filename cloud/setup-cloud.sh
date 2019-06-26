@@ -11,18 +11,10 @@
 # This process takes about 10 minutes or so.  You need to click OK at the
 # beginning for the apt upgrade, and re-log back in after if you want to use Docker
 #
+# Tested on the "Ubuntu Server 18.04 LTS (HVM), SSD Volume Type - ami-005bdb005fb00e791 (64-bit x86)" image
+#
 sudo apt update
 sudo apt upgrade -qyy
-#cmake https://apt.kitware.com/
-sudo apt-get update 
-sudo apt-get install -y apt-transport-https ca-certificates gnupg software-properties-common wget
-wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | sudo apt-key add -
-sudo apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
-sudo apt-get update
-sudo apt-get install -y kitware-archive-keyring
-sudo apt-key --keyring /etc/apt/trusted.gpg del C1F34CDD40CD72DA
-sudo apt-get install -y cmake
-#
 sudo apt install -y make pkg-config emacs
 sudo apt install -y samtools
 sudo apt install -y tabix
