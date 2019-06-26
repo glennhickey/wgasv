@@ -15,9 +15,10 @@
 #
 sudo apt update
 sudo apt upgrade -qyy
-sudo apt install -y make pkg-config emacs
+sudo apt install -y make pkg-config emacs virtualenv
 sudo apt install -y samtools
 sudo apt install -y tabix
+sudo apt install -y libssl-dev
 sudo apt install -y docker.io
 sudo usermod -aG docker $USER
 printf "\n\nNeed to log out then in for Docker to work!!\n\n"
@@ -59,6 +60,21 @@ git clone https://github.com/lh3/minimap2
 cd minimap2
 make
 
+# these packages aren't in apt in ubuntu 18.04.  but if we move to ubuntu 16.04, we can't
+# build vg due to cmake version issues.  so we install by hand
+cd /ebs1
+mkdir local
+git clone https://github.com/cloudflarearchive/kyotocabinet.git --recursive
+cd kyotocabinet
+./configure --prefix=/ebs1/local
+make -j $(getconf _NPROCESSORS_ONLN) && make install
+
+cd /ebs1
+git clone https://github.com/cloudflarearchive/kyototycoon.git --recursive
+cd kyototycoon
+./configure --prefix=/ebs1/local --with-kc=/ebs1/local/
+make -j $(getconf _NPROCESSORS_ONLN) && make install
+
 cd /ebs1
 git clone https://github.com/ComparativeGenomicsToolkit/cactus.git --recursive
 cd cactus
@@ -68,7 +84,11 @@ virtualenv cactus_env
 source cactus_env/bin/activate
 pip install --upgrade toil[aws,mesos]
 pip install --upgrade .
-sudo apt-get install -y git gcc g++ build-essential python-dev zlib1g-dev libkyototycoon-dev libtokyocabinet-dev libkyotocabinet-dev wget valgrind libbz2-dev libhiredis-dev pkg-config
+ttPrefix=/ebs1/local
+export kyotoTycoonIncl="-I${ttPrefix}/include -DHAVE_KYOTO_TYCOON=1"
+export kyotoTycoonLib="-L${ttPrefix}/lib -Wl,-rpath,${ttPrefix}/lib -lkyototycoon -lkyotocabinet -lz -lbz2 -lpthread -lm -lstdc++"
+
+sudo apt-get install -y git gcc g++ build-essential python-dev zlib1g-dev libtokyocabinet-dev libkyotocabinet-dev wget valgrind libbz2-dev libhiredis-dev pkg-config
 make
 
 export PATH="/ebs1/vcflib/bin:$PATH"
