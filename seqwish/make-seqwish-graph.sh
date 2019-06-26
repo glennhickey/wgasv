@@ -38,9 +38,9 @@ NAME="${FASTA.*}"
 
 if [ -f "${NAME}.paf" ]
 then
-    echo "PAF vcf exists, not regenerating"
+    echo "PAF xists, skipping minimap2"
 else
-    minimap2 ${FASTA} ${FASTA} -c -X -t $(getconf _NPROCESSORS_ONLN) -x asm20 > ${NAME}.paf
+    /usr/bin/time -v minimap2 ${FASTA} ${FASTA} -c -X -t $(getconf _NPROCESSORS_ONLN) -x asm20 > ${NAME}.paf 2> TIME.${NAME}.paf
     rm -f ${NAME}.gfa
 fi
 
@@ -48,7 +48,7 @@ if [ -f "${NAME}.gfa" ]
 then
     echo "GFA exists, skipping seqwish"
 else
-    seqwish -s ${FASTA} -p ${NAME}.paf -b ./swtemp -t $(getconf _NPROCESSORS_ONLN) -g ${NAME}.gfa
+    /usr/bin/time -v seqwish -s ${FASTA} -p ${NAME}.paf -b ./swtemp -t $(getconf _NPROCESSORS_ONLN) -g ${NAME}.gfa 2> TIME.${NAME}.gfa
     rm -f ${NAME}.vg
 fi
 
@@ -56,6 +56,6 @@ if [ -f "${NAME}.vg" ]
 then
     echo "vg exists, skipping view"
 else
-    vg view -Fv ${NAME}.gfa | vg mod -X 32 - | vg ids -s - > ${NAME}.vg
+    /usr/bin/time -v vg view -Fv ${NAME}.gfa | vg mod -X 32 - | vg ids -s - > ${NAME}.seqwish.vg 2> TIME.${NAME}.seqwish.vg
 fi
 
