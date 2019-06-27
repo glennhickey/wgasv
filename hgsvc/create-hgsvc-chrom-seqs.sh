@@ -68,7 +68,7 @@ fi
 #
 vg paths -x ${NAME}.xg -F -Q $CHROM > hg38_${CHROM}.fa
 cat hg38_${CHROM}.fa > hgsvc_${CHROM}.fa
-for SAMPLE in HG00514 HG005733 NA19240
+for SAMPLE in HG00514 HG00733 NA19240
 do
     vg paths -x ${NAME}.xg -g ${NAME}.gbwt -F -Q  _thread_${SAMPLE}_${CHROM}_0 | sed 's/_thread_//g'  > ${SAMPLE}_${CHROM}_0.fa
     cat ${SAMPLE}_${CHROM}_0.fa >> hgsvc_${CHROM}.fa
