@@ -34,7 +34,7 @@ set -x
 FASTA=$1
 shift
 
-NAME="${FASTA.*}"
+NAME="$(echo $(basename "$FASTA") | cut -f 1 -d '.')"
 
 if [ -f "${NAME}.paf" ]
 then
