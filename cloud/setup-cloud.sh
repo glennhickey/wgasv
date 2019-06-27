@@ -87,14 +87,24 @@ pip install --upgrade .
 ttPrefix=/ebs1/local
 export kyotoTycoonIncl="-I${ttPrefix}/include -DHAVE_KYOTO_TYCOON=1"
 export kyotoTycoonLib="-L${ttPrefix}/lib -Wl,-rpath,${ttPrefix}/lib -lkyototycoon -lkyotocabinet -lz -lbz2 -lpthread -lm -lstdc++"
-
 sudo apt-get install -y git gcc g++ build-essential python-dev zlib1g-dev libtokyocabinet-dev libkyotocabinet-dev wget valgrind libbz2-dev libhiredis-dev pkg-config
+make
+
+cd /ebs1
+git clone https://github.com/joelarmstrong/repeatMaskerPipeline.git
+
+cd /ebs1
+git clone https://github.com/ComparativeGenomicsToolkit/hal2vg.git --recursive
+cd hal2vg
+export PATH="/ebs1/cactus/submodules/hdf5/bin:$PATH"
+export h5prefix="-prefix=/ebs1/cactus/submodules/hdf5"
 make
 
 export PATH="/ebs1/vcflib/bin:$PATH"
 export PATH="/ebs1/seqwish/bin:$PATH"
 export PATH="/ebs1/minimap2:$PATH"
 export PATH="/ebs1/bcftools:$PATH"
+export PATH="/ebs1/hal2vg:$PATH"
 
 
 
