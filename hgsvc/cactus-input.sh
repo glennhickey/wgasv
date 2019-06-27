@@ -35,8 +35,8 @@ echo "((((HG00514.0:0.01,HG00514.1:0.01):0.02,(HG00733.0:0.01,HG00733.1:0.01):0.
 echo "hg38 $(pwd)/hg38_${CHROM}.fa"
 echo "HG00514.0 $(pwd)/HG00514_${CHROM}_0.fa"
 echo "HG00514.1 $(pwd)/HG00514_${CHROM}_1.fa"
-echo "HG00733.0 $(pwd)/HG00533_${CHROM}_0.fa"
-echo "HG00733.1 $(pwd)/HG00533_${CHROM}_1.fa"
+echo "HG00733.0 $(pwd)/HG00733_${CHROM}_0.fa"
+echo "HG00733.1 $(pwd)/HG00733_${CHROM}_1.fa"
 echo "NA19240.0 $(pwd)/NA19240_${CHROM}_0.fa"
 echo "NA19240.1 $(pwd)/NA19240_${CHROM}_1.fa"
 
