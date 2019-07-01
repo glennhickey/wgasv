@@ -41,7 +41,9 @@ shift
 mkdir ${OUTDIR}
 rm -rf ${OUTDIR}.jobstore
 
-repeatMaskerPipeline.py human ${OUTDIR} $(tail -n +2 ${SEQFILE} | awk '{ print $2 }' ) ${OUTDIR}.jobstore
+repeatMaskerPipeline.py human ${OUTDIR} $(tail -n +2 ${SEQFILE} | grep -v chimp | grep -v hg38 | awk '{ print $2 }' ) ${OUTDIR}.jobstore
 head -1 ${SEQFILE}
-tail -n +2 ${SEQFILE} | awk -v od="${OUTDIR}" '{ print $1 "\t" od basename $2 ".masked" }'
+tail -n +2 ${SEQFILE} | grep -v chimp | grep -v hg38 | awk -v od="${OUTDIR}" '{ print $1 "\t" od basename $2 ".masked" }'
+tail -n +2 ${SEQFILE} | grep chimp
+tail -n +2 ${SEQFILE} | grep hg3
 
