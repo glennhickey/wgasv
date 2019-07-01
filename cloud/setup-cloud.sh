@@ -105,6 +105,7 @@ export PATH="/ebs1/seqwish/bin:$PATH"
 export PATH="/ebs1/minimap2:$PATH"
 export PATH="/ebs1/bcftools:$PATH"
 export PATH="/ebs1/hal2vg:$PATH"
+export PATH="/ebs1/repeatMaskerPipeline:$PATH"
 
 
 
