@@ -1,21 +1,33 @@
 #!/bin/bash
 
+# run seqwish
+# needs minimap2, fpa and seqish in the path
 #
-# seqwish to make a graph from a fasta
+# minimap takes as input a fasta file for each sequence
+# seqish takes as input the paf output of minimap along with a fasta file with all
+# the sequences inside (with reference sequence first)
 #
+
+FPALEN=10000
 
 usage() {
     # Print usage to stderr
     exec 1>&2
-    printf "Usage: $0 [OPTIONS] FASTA\n"
+    printf "Usage: $0 [OPTIONS] <ALL-FASTA> <OUT-NAME> <FASTA1> <FASTA2> ... <FASTAN>\n"
 	 printf "Arguments:\n"
-	 printf "   FASTA: Fasta file with all the sequences\n"
+	 printf "   ALL-FASTA: file containing all the sequences in desired order\n"
+	 printf "   OUT-NAME:  base name for output files\n"	 
+	 printf "   FASTA1-N:  same sequences as above, but split into one file per genome\n"
 	 printf "Options:\n"
+	 printf "  -l N:       FPA length filter [default=${FPALEN}]\n"
     exit 1
 }
 
-while getopts "h" o; do
+while getopts "hl:" o; do
     case "${o}" in
+	l)
+	    FPALEN=${OPTARG}
+	    ;;
         *)
             usage
             ;;
@@ -24,38 +36,57 @@ done
 
 shift $((OPTIND-1))
 
-if [[ "$#" -lt "1" ]]; then
+if [[ "$#" -lt "4" ]]; then
     # Too few arguments
     usage
 fi
 
 set -x
 
-FASTA=$1
+ALL_FASTA_FILE="${1}"
+shift
+OUT_NAME="${1}"
 shift
 
-NAME="$(echo $(basename "$FASTA") | cut -f 1 -d '.')"
+FASTA_LIST=""
+for var in "$@"
+do
+    FASTA_LIST="${FASTA_LIST} $var"
+done
 
-if [ -f "${NAME}.paf" ]
+# get the minimap script and set the threads
+wget -nc https://raw.githubusercontent.com/ekg/yeast-pangenome/master/pan-minimap2
+sed -i 's/-t 20/-t $(getconf _NPROCESSORS_ONLN)/g' pan-minimap2
+chmod u+x ./pan-minimap2
+
+if [ -f ${OUT_NAME}.paf ]
 then
-    echo "PAF xists, skipping minimap2"
+    echo "PAF exists, skipping minimap2"
 else
-    /usr/bin/time -v minimap2 ${FASTA} ${FASTA} -c -X -t $(getconf _NPROCESSORS_ONLN) -x asm20 > ${NAME}.paf 2> TIME.${NAME}.paf
-    rm -f ${NAME}.gfa
+    # run the pairwise alignment
+    /usr/bin/time -v ./pan-minimap2 $FASTA_LIST > ${OUT_NAME}.paf
+    rm -f ${OUT_NAME}_fpa${FPALEN}.paf
+    rm -f ${OUT_NAME}_fpa${FPALEN}.gfa
+fi    
+
+# do the fpa filter (note: fpa was installed via conda)
+cat ${OUT_NAME}.paf | fpa drop -l ${FPALEN} > ${OUT_NAME}_fpa${FPALEN}.paf
+
+mkdir -p work # a work directory that's local, files created here will be deleted when seqwish completes
+
+if [ -f ${OUT_NAME}_fpa${FPALEN}.gfa ]
+then
+    echo "GFA exits, skipping seqwish"
+else
+    /usr/bin/time -v seqwish -s ${ALL_FASTA_FILE} -p ${OUT_NAME}_fpa${FPALEN}.paf -t $(getconf _NPROCESSORS_ONLN) -b work/x -g ${OUT_NAME}_fpa${FPALEN}.gfa 2> TIME.${OUT_NAME}_fpa${FPALEN}.gfa
+    rm -f ${OUT_NAME}_fpa${FPALEN}.vg
 fi
 
-if [ -f "${NAME}.gfa" ]
+if [ -f ${OUT_NAME}_fpa${FPALEN}.vg ]
 then
-    echo "GFA exists, skipping seqwish"
+    echo "VG exists, skipping vg view"
 else
-    /usr/bin/time -v seqwish -s ${FASTA} -p ${NAME}.paf -b ./swtemp -t $(getconf _NPROCESSORS_ONLN) -g ${NAME}.gfa 2> TIME.${NAME}.gfa
-    rm -f ${NAME}.vg
+    /usr/bin/time -v vg view -gv ${OUT_NAME}_fpa${FPALEN}.gfa > ${OUT_NAME}_fpa${FPALEN}.vg 2> TIME.${OUT_NAME}_fpa${FPALEN}.vg
 fi
 
-if [ -f "${NAME}.vg" ]
-then
-    echo "vg exists, skipping view"
-else
-    /usr/bin/time -v vg view -Fv ${NAME}.gfa | vg mod -X 32 - | vg ids -s - > ${NAME}.seqwish.vg 2> TIME.${NAME}.seqwish.vg
-fi
 

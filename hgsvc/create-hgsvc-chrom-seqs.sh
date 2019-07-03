@@ -49,6 +49,7 @@ else
 	 cd sv-genotyping-paper/human/hgsvc
 	 ./make-vcf.sh
 	 popd
+	 rm -f ${NAME}.gbwt
 fi
 
 #
