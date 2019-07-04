@@ -64,7 +64,7 @@ then
     echo "PAF exists, skipping minimap2"
 else
     # run the pairwise alignment
-    /usr/bin/time -v ./pan-minimap2 $FASTA_LIST > ${OUT_NAME}.paf
+    /usr/bin/time -v ./pan-minimap2 $FASTA_LIST > ${OUT_NAME}.paf 2> TIME.${OUT_NAME}.paf
     rm -f ${OUT_NAME}_fpa${FPALEN}.paf
     rm -f ${OUT_NAME}_fpa${FPALEN}.gfa
 fi    
@@ -86,7 +86,7 @@ if [ -f ${OUT_NAME}_fpa${FPALEN}.vg ]
 then
     echo "VG exists, skipping vg view"
 else
-    /usr/bin/time -v vg view -gv ${OUT_NAME}_fpa${FPALEN}.gfa > ${OUT_NAME}_fpa${FPALEN}.vg 2> TIME.${OUT_NAME}_fpa${FPALEN}.vg
+    /usr/bin/time -v vg view -Fv ${OUT_NAME}_fpa${FPALEN}.gfa > ${OUT_NAME}_fpa${FPALEN}.vg 2> TIME.${OUT_NAME}_fpa${FPALEN}.vg
 fi
 
 
