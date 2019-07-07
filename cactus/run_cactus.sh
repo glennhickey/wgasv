@@ -70,5 +70,5 @@ if [ -f "${VGFILE}" ]
 then 
     echo "vg exits, skipping hal2vg"
 else
-    /usr/bin/time -v hal2vg ${HALFILE} --refGenome ${REFNAME} --noAncestors > ${VGFILE} 2> TIME.${VGFILE}
+    /usr/bin/time -v hal2vg ${HALFILE} --refGenome hg38 --noAncestors --targetGenomes HG00514.0,HG00514.1 --onlySequenceNames > ${VGFILE} 2> TIME.${VGFILE}
 fi
