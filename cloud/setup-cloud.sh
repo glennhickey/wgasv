@@ -21,6 +21,7 @@ sudo apt install -y tabix
 sudo apt install -y libssl-dev
 sudo apt install -y docker.io
 sudo usermod -aG docker $USER
+sudo apt install -y last-align
 printf "\n\nNeed to log out then in for Docker to work!!\n\n"
 
 mkdir /ebs1
@@ -100,12 +101,35 @@ export PATH="/ebs1/cactus/submodules/hdf5/bin:$PATH"
 export h5prefix="-prefix=/ebs1/cactus/submodules/hdf5"
 make
 
+cd /ebs1
+git clone https://github.com/bioinformatics-centre/AsmVar
+cd AsmVar/src/AsmvarDetect
+make
+
+cd /ebs1
+wget https://github.com/Martinsos/edlib/archive/v1.2.4.tar.gz
+tar -xzvf v1.2.4.tar.gz
+rm v1.2.4.tar.gz
+cd edlib-1.2.4/build
+cmake -D CMAKE_BUILD_TYPE=Release ..
+make
+export PATH="/ebs1/edlib-1.2.4/build/bin:$PATH"
+
+cd /ebs1
+git clone git://github.com/nhansen/SVanalyzer.git
+cd SVanalyzer
+cpan Module::Build
+perl Build.PL
+./Build
+./Build test
+sudo ./Build install
+
 export PATH="/ebs1/vcflib/bin:$PATH"
 export PATH="/ebs1/seqwish/bin:$PATH"
 export PATH="/ebs1/minimap2:$PATH"
 export PATH="/ebs1/bcftools:$PATH"
 export PATH="/ebs1/hal2vg:$PATH"
 export PATH="/ebs1/repeatMaskerPipeline:$PATH"
-
+export PATH="/ebs1/AsmVar/src/AsmvarDetect:$PATH"
 
 
