@@ -21,6 +21,7 @@ sudo apt install -y tabix
 sudo apt install -y libssl-dev
 sudo apt install -y docker.io
 sudo usermod -aG docker $USER
+sudo apt install -y last-align
 printf "\n\nNeed to log out then in for Docker to work!!\n\n"
 
 mkdir /ebs1
@@ -100,12 +101,17 @@ export PATH="/ebs1/cactus/submodules/hdf5/bin:$PATH"
 export h5prefix="-prefix=/ebs1/cactus/submodules/hdf5"
 make
 
+cd /ebs1
+git clone https://github.com/bioinformatics-centre/AsmVar
+cd AsmVar/src/AsmvarDetect
+make
+
 export PATH="/ebs1/vcflib/bin:$PATH"
 export PATH="/ebs1/seqwish/bin:$PATH"
 export PATH="/ebs1/minimap2:$PATH"
 export PATH="/ebs1/bcftools:$PATH"
 export PATH="/ebs1/hal2vg:$PATH"
 export PATH="/ebs1/repeatMaskerPipeline:$PATH"
-
+export PATH="/ebs1/AsmVar/src/AsmvarDetect:$PATH"
 
 
