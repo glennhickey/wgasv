@@ -22,6 +22,7 @@ sudo apt install -y libssl-dev
 sudo apt install -y docker.io
 sudo usermod -aG docker $USER
 sudo apt install -y last-align
+sudo apt-get install libgnutls28-dev
 printf "\n\nNeed to log out then in for Docker to work!!\n\n"
 
 mkdir /ebs1
